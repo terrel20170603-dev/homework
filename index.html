@@ -737,7 +737,7 @@
             }
             saveIssued(list);
             renderIssued();
-
+            pushCloud(list);
             document.getElementById("pvBody").innerHTML = buildSheetHtml(data);
             document.getElementById("shareBtn").style.display = "inline-block";
             closeForm();
@@ -747,6 +747,7 @@
 
         // ===== 已发出的手册列表 =====
         const ISSUED_KEY = "homework_issued";
+        const CLOUD_URL = "https://api.restful-api.dev/objects/ff808181a09d98f701a1bf4548d86d71";
         let editingId = null;
 
         function loadIssued() {
@@ -756,6 +757,29 @@
 
         function saveIssued(list) {
             try { localStorage.setItem(ISSUED_KEY, JSON.stringify(list.slice(0, 100))); } catch (e) {}
+        }
+
+        // 把列表同步到云端（所有机器共用一份数据）
+        function pushCloud(list) {
+            try {
+                fetch(CLOUD_URL, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ name: "homework_issued", data: { issued: list.slice(0, 100) } })
+                }).catch(() => {});
+            } catch (e) {}
+        }
+
+        // 从云端拉取列表并刷新页面显示
+        function fetchCloud() {
+            try {
+                fetch(CLOUD_URL).then(r => r.json()).then(obj => {
+                    if (obj && obj.data && Array.isArray(obj.data.issued)) {
+                        saveIssued(obj.data.issued);
+                        renderIssued();
+                    }
+                }).catch(() => {});
+            } catch (e) {}
         }
 
         function renderIssued() {
@@ -834,6 +858,7 @@
             const list = loadIssued().filter(it => it.id !== id);
             saveIssued(list);
             renderIssued();
+            pushCloud(list);
             showToast("已清除这份手册");
         }
 
@@ -956,8 +981,9 @@
             } catch (e) {}
         })();
 
-        // 打开页面时显示已发出的手册列表
+        // 打开页面时显示本地已发出的手册列表，并从云端拉取最新数据
         renderIssued();
+        fetchCloud();
 
         document.addEventListener("keydown", e => {
             if (e.key === "Escape") { closeForm(); closePreview(); closeSubPicker(); }
