@@ -1,0 +1,40 @@
+{
+  "issued": [
+    {
+      "id": "mw8y23cq1dz",
+      "d": {
+        "mode": "all",
+        "date": "2026-11-09",
+        "cls": "P.4A",
+        "rows": [
+          { "subject": "中文", "texts": [] },
+          { "subject": "英文", "texts": ["Gr pg.20-21"] },
+          { "subject": "數學", "texts": ["MRT Corr."] },
+          { "subject": "音樂", "texts": [] },
+          { "subject": "體育", "texts": [] },
+          { "subject": "成長課", "texts": [] },
+          { "subject": "普通話", "texts": [] },
+          { "subject": "人文", "texts": [] },
+          { "subject": "科学", "texts": [] },
+          { "subject": "聖經", "texts": [] },
+          { "subject": "EPH", "texts": [] },
+          { "subject": "其他", "texts": [] }
+        ],
+        "lessons": [
+          { "subject": "英文", "text": "Revision" },
+          { "subject": "英文", "text": "Revision" },
+          { "subject": "聖經", "text": "Bible videos" },
+          { "subject": "人文", "text": "(PE)考试" },
+          { "subject": "體育", "text": "考试" },
+          { "subject": "數學", "text": "Revision" },
+          { "subject": "數學", "text": "Revision" },
+          { "subject": "中文", "text": "温习" },
+          { "subject": "中文", "text": "温习" }
+        ],
+        "notice": "",
+        "contact": ""
+      },
+      "link": "https://terrel20170603-dev.github.io/homework/#h=eyJtb2RlIjoiYWxsIiwiZGF0ZSI6IjIwMjYtMTEtMDkiLCJjbHMiOiJQLjRBIiwicm93cyI6W3sic3ViamVjdCI6IuS4reaWhyIsInRleHRzIjpbXX0seyJzdWJqZWN0Ijoi6Iux5paHIiwidGV4dHMiOlsiR3IgcGcuMjAtMjEiXX0seyJzdWJqZWN0Ijoi5pW45a24IiwidGV4dHMiOlsiTVJUIENvcnIuIl19LHsic3ViamVjdCI6Iumfs+aogiIsInRleHRzIjpbXX0seyJzdWJqZWN0Ijoi6auU6IKyIiwidGV4dHMiOltdfSx7InN1YmplY3QiOiLmiJDplbfoqrIiLCJ0ZXh0cyI6W119LHsic3ViamVjdCI6IuaZrumAmuipsSIsInRleHRzIjpbXX0seyJzdWJqZWN0Ijoi5Lq65paHIiwidGV4dHMiOltdfSx7InN1YmplY3QiOiLnp5HlraYiLCJ0ZXh0cyI6W119LHsic3ViamVjdCI6IuiBlue2kyIsInRleHRzIjpbXX0seyJzdWJqZWN0IjoiRVBIIiwidGV4dHMiOltdfSx7InN1YmplY3QiOiLlhbbku5YiLCJ0ZXh0cyI6W119XSwibGVzc29ucyI6W3sic3ViamVjdCI6IuiLseaWhyIsInRleHQiOiJSZXZpc2lvbiJ9LHsic3ViamVjdCI6IuiLseaWhyIsInRleHQiOiJSZXZpc2lvbiJ9LHsic3ViamVjdCI6IuiBlue2kyIsInRleHQiOiJCaWJsZSB2aWRlb3MifSx7InN1YmplY3QiOiLkurrmlociLCJ0ZXh0IjoiKFBFKeiAg+ivlSJ9LHsic3ViamVjdCI6IumrlOiCsiIsInRleHQiOiLogIPor5UifSx7InN1YmplY3QiOiLmlbjlrbgiLCJ0ZXh0IjoiUmV2aXNpb24ifSx7InN1YmplY3QiOiLmlbjlrbgiLCJ0ZXh0IjoiUmV2aXNpb24ifSx7InN1YmplY3QiOiLkuK3mlociLCJ0ZXh0Ijoi5rip5LmgIn0seyJzdWJqZWN0Ijoi5Lit5paHIiwidGV4dCI6Iua4qeS5oCJ9XSwibm90aWNlIjoiIiwiY29udGFjdCI6IiJ9"
+    }
+  ]
+}

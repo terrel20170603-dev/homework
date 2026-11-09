@@ -1,1030 +1,283 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-Hant">
 <head>
-    <title>Homework</title>
-    <style>
-        * { box-sizing: border-box; }
-
-        body {
-            margin: 0;
-            min-height: 100vh;
-            font-family: Roboto, Arial, "Helvetica Neue", Helvetica, "Microsoft YaHei", sans-serif;
-            background: linear-gradient(135deg, #55b0ff, #7c6bff);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: #202124;
-        }
-
-        .credit {
-            color: rgba(255,255,255,.85);
-            font-size: 13px;
-            letter-spacing: 1px;
-            margin: 0 0 4px;
-            text-shadow: 0 1px 4px rgba(0,0,0,.2);
-        }
-
-        h1 {
-            font-size: 40px;
-            margin: 0 0 6px;
-            color: #fff;
-            text-shadow: 0 2px 8px rgba(0,0,0,.2);
-        }
-
-        .sub {
-            color: #eaf3ff;
-            margin: 0 0 26px;
-            font-size: 15px;
-        }
-
-        .main-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            padding: 14px 34px;
-            background: #fff;
-            color: #1a73e8;
-            font-size: 17px;
-            font-weight: 600;
-            border: none;
-            border-radius: 28px;
-            cursor: pointer;
-            box-shadow: 0 4px 16px rgba(0,0,0,.22);
-            transition: background .15s, box-shadow .15s, transform .1s;
-            font-family: inherit;
-        }
-
-        .main-btn:hover { background: #f4f8ff; box-shadow: 0 6px 20px rgba(0,0,0,.28); }
-        .main-btn:active { transform: scale(.98); }
-
-        .main-btn svg { flex-shrink: 0; }
-
-        /* 已发出的手册列表 */
-        .issued {
-            margin-top: 28px;
-            width: 440px;
-            max-width: 100%;
-        }
-
-        .issued h3 {
-            color: #fff;
-            font-size: 15px;
-            font-weight: 600;
-            margin: 0 0 10px;
-            text-align: center;
-            text-shadow: 0 1px 6px rgba(0,0,0,.2);
-        }
-
-        .issued-item {
-            background: #fff;
-            border-radius: 12px;
-            padding: 10px 14px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 8px;
-            box-shadow: 0 3px 12px rgba(0,0,0,.15);
-        }
-
-        .issued-info { flex: 1; min-width: 0; }
-        .issued-title { font-size: 14px; font-weight: 600; color: #202124; }
-        .issued-sub { font-size: 12px; color: #5f6368; margin-top: 2px; }
-
-        .item-btn {
-            padding: 5px 12px;
-            font-size: 12px;
-            border: 1px solid #dadce0;
-            background: #fff;
-            color: #3c4043;
-            border-radius: 14px;
-            cursor: pointer;
-            font-family: inherit;
-            transition: all .12s;
-            flex-shrink: 0;
-        }
-
-        .item-btn:hover { background: #e8f0fe; border-color: #1a73e8; color: #1a73e8; }
-
-        .item-btn.danger:hover { background: #fce8e6; border-color: #d93025; color: #d93025; }
-
-        .overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,.5);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            z-index: 100;
-        }
-
-        .overlay.show { display: flex; }
-
-        .card {
-            background: #fff;
-            border-radius: 14px;
-            width: 560px;
-            max-width: 100%;
-            max-height: 92vh;
-            overflow: auto;
-            padding: 26px 28px 22px;
-            box-shadow: 0 8px 30px rgba(0,0,0,.3);
-            animation: pop .18s ease-out;
-        }
-
-        @keyframes pop {
-            from { transform: scale(.96); opacity: 0; }
-            to   { transform: scale(1); opacity: 1; }
-        }
-
-        .card h2 {
-            margin: 0 0 16px;
-            font-size: 21px;
-            font-weight: 500;
-        }
-
-        /* 类型切换 */
-        .mode-row {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 18px;
-        }
-
-        .mode-btn {
-            flex: 1;
-            padding: 11px 0;
-            font-size: 14px;
-            font-weight: 500;
-            font-family: inherit;
-            border: 1px solid #dadce0;
-            background: #fff;
-            color: #3c4043;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all .15s;
-        }
-
-        .mode-btn:hover { background: #f8f9fa; }
-
-        .mode-btn.active {
-            background: #e8f0fe;
-            border-color: #1a73e8;
-            color: #1a73e8;
-        }
-
-        /* 表单 */
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 14px;
-        }
-
-        .field label {
-            display: block;
-            font-size: 12px;
-            color: #5f6368;
-            margin-bottom: 4px;
-            font-weight: 500;
-        }
-
-        .field input,
-        .field textarea {
-            width: 100%;
-            padding: 9px 12px;
-            font-size: 14px;
-            border: 1px solid #dadce0;
-            border-radius: 8px;
-            outline: none;
-            font-family: inherit;
-            transition: border-color .15s, box-shadow .15s;
-        }
-
-        .field input:focus,
-        .field textarea:focus {
-            border-color: #1a73e8;
-            box-shadow: 0 0 0 1px #1a73e8;
-        }
-
-        .field.wide { grid-column: 1 / -1; }
-
-        .quick-dates {
-            display: flex;
-            gap: 6px;
-            margin-top: 6px;
-        }
-
-        .quick-dates button {
-            padding: 4px 12px;
-            font-size: 12px;
-            font-family: inherit;
-            border: 1px solid #dadce0;
-            background: #fff;
-            color: #3c4043;
-            border-radius: 14px;
-            cursor: pointer;
-            transition: all .15s;
-        }
-
-        .quick-dates button:hover { background: #e8f0fe; border-color: #1a73e8; color: #1a73e8; }
-
-        .field textarea { resize: vertical; min-height: 54px; }
-
-        /* 功课表格 */
-        .hw-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 14px;
-        }
-
-        .hw-table th,
-        .hw-table td {
-            border: 1px solid #e0e3e7;
-            padding: 6px 8px;
-            text-align: left;
-            font-size: 14px;
-        }
-
-        .hw-table th {
-            background: #f8f9fa;
-            font-weight: 500;
-            color: #3c4043;
-            width: 90px;
-        }
-
-        .hw-table td input {
-            width: 100%;
-            border: none;
-            outline: none;
-            font-size: 14px;
-            font-family: inherit;
-            padding: 4px 2px;
-            background: transparent;
-        }
-
-        /* 科目行内小按钮（+/-/更改） */
-        .mini-btn {
-            width: 20px;
-            height: 20px;
-            line-height: 1;
-            padding: 0;
-            font-size: 13px;
-            border: 1px solid #dadce0;
-            background: #fff;
-            color: #3c4043;
-            border-radius: 6px;
-            cursor: pointer;
-            font-family: inherit;
-            transition: all .12s;
-        }
-
-        .mini-btn:hover { background: #e8f0fe; border-color: #1a73e8; color: #1a73e8; }
-
-        .change-btn {
-            padding: 1px 8px;
-            height: 20px;
-            font-size: 11px;
-            border: 1px solid #dadce0;
-            background: #fff;
-            color: #3c4043;
-            border-radius: 10px;
-            cursor: pointer;
-            font-family: inherit;
-            transition: all .12s;
-        }
-
-        .change-btn:hover { background: #e8f0fe; border-color: #1a73e8; color: #1a73e8; }
-
-        .subj-cell { white-space: nowrap; }
-
-        .hw-btns { display: inline-flex; gap: 4px; margin-left: 6px; vertical-align: middle; }
-
-        .slots { display: flex; flex-direction: column; }
-
-        .slots .slot { margin: 2px 0; }
-
-        .lesson-subject { font-weight: 500; margin-right: 6px; }
-
-        /* 科目选择弹窗 */
-        .sub-card { width: 400px; }
-
-        .sub-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-        }
-
-        .sub-opt {
-            padding: 10px 0;
-            font-size: 14px;
-            font-family: inherit;
-            border: 1px solid #dadce0;
-            background: #fff;
-            color: #3c4043;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all .12s;
-        }
-
-        .sub-opt:hover { background: #e8f0fe; border-color: #1a73e8; color: #1a73e8; }
-
-        .sec-title {
-            font-size: 13px;
-            font-weight: 600;
-            color: #3c4043;
-            margin: 4px 0 8px;
-        }
-
-        .check {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 14px;
-            color: #3c4043;
-            margin-top: 12px;
-            cursor: pointer;
-        }
-
-        .actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            margin-top: 22px;
-        }
-
-        .btn-ghost {
-            background: #f1f3f4;
-            color: #3c4043;
-            border: none;
-            border-radius: 8px;
-            padding: 10px 22px;
-            font-size: 14px;
-            cursor: pointer;
-            font-family: inherit;
-        }
-
-        .btn-ghost:hover { background: #e8eaed; }
-
-        .btn-blue {
-            background: #1a73e8;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            padding: 10px 26px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            font-family: inherit;
-            transition: background .15s;
-        }
-
-        .btn-blue:hover { background: #1765cc; }
-
-        /* 预览（手册样式） */
-        .pv-sheet {
-            border: 1px solid #e0e3e7;
-            border-radius: 10px;
-            padding: 22px 24px;
-        }
-
-        .pv-school {
-            text-align: center;
-            font-size: 18px;
-            font-weight: 700;
-            letter-spacing: 2px;
-        }
-
-        .pv-book {
-            text-align: center;
-            font-size: 14px;
-            color: #5f6368;
-            margin: 2px 0 14px;
-        }
-
-        .pv-info {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 4px 18px;
-            font-size: 14px;
-            margin-bottom: 12px;
-        }
-
-        .pv-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 14px;
-        }
-
-        .pv-table th,
-        .pv-table td {
-            border: 1px solid #202124;
-            padding: 7px 10px;
-            font-size: 14px;
-            text-align: left;
-        }
-
-        .pv-table th { width: 90px; background: #f8f9fa; }
-
-        .pv-sec {
-            font-size: 14px;
-            line-height: 1.7;
-            margin-bottom: 12px;
-            white-space: pre-wrap;
-        }
-
-        .pv-sec b { display: block; margin-bottom: 2px; }
-
-        .pv-sign {
-            display: flex;
-            justify-content: space-between;
-            font-size: 14px;
-            margin-top: 26px;
-            padding-top: 10px;
-        }
-
-        .pv-empty { color: #9aa0a6; font-style: italic; }
-
-        .toast {
-            position: fixed;
-            left: 50%;
-            bottom: 30px;
-            transform: translateX(-50%) translateY(20px);
-            background: #323232;
-            color: #fff;
-            padding: 12px 20px;
-            border-radius: 8px;
-            font-size: 14px;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity .25s, transform .25s;
-            z-index: 200;
-        }
-
-        .toast.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
-
-        /* 打印：只打印手册预览内容 */
-        @media print {
-            body { background: #fff; }
-            h1, .sub, .main-btn, .toast, #formOverlay { display: none !important; }
-            #previewOverlay { position: static; background: #fff; padding: 0; display: block !important; }
-            #previewOverlay .card { box-shadow: none; width: 100%; max-width: none; max-height: none; padding: 0; }
-            #previewOverlay h2, #previewOverlay .actions { display: none !important; }
-            .pv-sheet { border: none; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>家校手冊</title>
+<style>
+    * { box-sizing: border-box; }
+
+    body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang HK", "Microsoft JhengHei", Roboto, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 36px 20px 60px;
+    }
+
+    .credit {
+        color: rgba(255,255,255,.85);
+        font-size: 13px;
+        letter-spacing: 1px;
+        margin: 0 0 4px;
+        text-shadow: 0 1px 4px rgba(0,0,0,.2);
+    }
+
+    h1 {
+        color: #fff;
+        font-size: 34px;
+        font-weight: 500;
+        margin: 0 0 4px;
+        text-shadow: 0 2px 10px rgba(0,0,0,.18);
+    }
+
+    .sub {
+        color: rgba(255,255,255,.9);
+        font-size: 14px;
+        margin: 0 0 28px;
+    }
+
+    .list {
+        width: 720px;
+        max-width: 100%;
+    }
+
+    .item {
+        background: #fff;
+        border-radius: 14px;
+        padding: 16px 20px;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        cursor: pointer;
+        box-shadow: 0 4px 16px rgba(0,0,0,.14);
+        transition: transform .12s, box-shadow .12s;
+    }
+
+    .item:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(0,0,0,.18); }
+
+    .item-date {
+        font-size: 16px;
+        font-weight: 600;
+        color: #202124;
+    }
+
+    .item-meta {
+        font-size: 12px;
+        color: #5f6368;
+        margin-top: 4px;
+    }
+
+    .badge {
+        display: inline-block;
+        font-size: 11px;
+        padding: 1px 8px;
+        border-radius: 10px;
+        background: #e8f0fe;
+        color: #1a73e8;
+        margin-left: 8px;
+        vertical-align: 1px;
+    }
+
+    .item-arrow { color: #9aa0a6; font-size: 18px; }
+
+    .empty {
+        color: rgba(255,255,255,.9);
+        font-size: 14px;
+        text-align: center;
+        line-height: 1.9;
+    }
+
+    /* 详情的纸张 */
+    .sheet {
+        width: 720px;
+        max-width: 100%;
+        background: #fff;
+        border-radius: 6px;
+        padding: 30px 34px;
+        box-shadow: 0 8px 30px rgba(0,0,0,.2);
+    }
+
+    .pv-school { font-size: 20px; font-weight: 700; letter-spacing: 2px; color: #1a1a1a; }
+    .pv-book { font-size: 12px; color: #666; letter-spacing: 2px; margin-top: 4px; }
+    .pv-info { display: flex; gap: 26px; font-size: 13px; color: #333; margin: 16px 0 14px; }
+    .pv-sec { font-size: 13px; line-height: 1.9; margin-top: 16px; }
+    .pv-sec b { display: block; margin-bottom: 2px; }
+    .pv-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .pv-table th, .pv-table td { border: 1px solid #dcdcdc; padding: 6px 10px; text-align: left; vertical-align: top; }
+    .pv-table th { background: #f5f6f7; font-weight: 600; width: 84px; }
+    .pv-empty { color: #bbb; }
+
+    .tools {
+        display: flex;
+        gap: 10px;
+        margin: 18px 0 0;
+    }
+
+    .btn {
+        padding: 10px 22px;
+        font-size: 14px;
+        font-family: inherit;
+        border-radius: 8px;
+        border: 1px solid transparent;
+        cursor: pointer;
+        transition: all .12s;
+    }
+
+    .btn-primary { background: #1a73e8; color: #fff; }
+    .btn-primary:hover { background: #1765cc; }
+    .btn-ghost { background: #fff; color: #3c4043; border-color: #dadce0; }
+    .btn-ghost:hover { background: #f1f3f4; }
+
+    .hidden { display: none !important; }
+
+    @media print {
+        body { background: #fff; padding: 0; }
+        .credit, h1, .sub, .list, .tools { display: none !important; }
+        .sheet { box-shadow: none; width: 100%; padding: 0; }
+    }
+</style>
 </head>
 <body>
     <p class="credit">Made by Terrel Wu</p>
-    <h1>Homework</h1>
-    <p class="sub">St. Louis Homework</p>
+    <h1>家校手冊</h1>
+    <p class="sub">學校發出的功課手冊 · 只供查看</p>
 
-    <button class="main-btn" onclick="openForm()">
-        <svg viewBox="0 0 24 24" width="22" height="22">
-            <path fill="#1a73e8" d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-9 2h6v5H9V4zm9 16H6v-2h12v2zm0-4H6V9h2.28c.35.6.98 1 1.72 1h4c.74 0 1.37-.4 1.72-1H18v7z"/>
-        </svg>
-        发出手册
-    </button>
+    <div class="list" id="list"></div>
+    <p class="empty hidden" id="emptyTip">暫無手冊</p>
 
-    <!-- 已发出的手册 -->
-    <div class="issued" id="issuedBox" style="display:none;">
-        <h3>已发出的手册</h3>
-        <div id="issuedList"></div>
-        <p id="syncState" style="text-align:center;color:rgba(255,255,255,.8);font-size:12px;margin:6px 0 0;"></p>
-    </div>
-
-    <!-- 填写表格 -->
-    <div class="overlay" id="formOverlay" onclick="onBackdropClick(event, 'formOverlay')">
-        <div class="card" onclick="event.stopPropagation()">
-            <h2>发出手册</h2>
-
-            <div class="mode-row">
-                <button class="mode-btn active" id="modeHw" onclick="setMode('hw')">只写功课</button>
-                <button class="mode-btn" id="modeAll" onclick="setMode('all')">所有手册</button>
-            </div>
-
-            <div class="form-grid">
-                <div class="field">
-                    <label>日期（只可选今天或以前）</label>
-                    <input type="date" id="fDate">
-                    <div class="quick-dates">
-                        <button type="button" onclick="setDate(0)">今天</button>
-                        <button type="button" onclick="setDate(-1)">昨天</button>
-                        <button type="button" onclick="setDate(-2)">前天</button>
-                    </div>
-                </div>
-                <div class="field">
-                    <label>班级</label>
-                    <input id="fClass" placeholder="例如：P4A" autocomplete="off">
-                </div>
-            </div>
-
-            <p class="sec-title">今日功课（＋ = 两条功课，－ = 没有功课）</p>
-            <table class="hw-table" id="hwTable">
-                <thead>
-                    <tr><th>科目</th><th>功课内容</th></tr>
-                </thead>
-                <tbody>
-                    <tr data-subject="中文"><td class="subj-cell">中文<span class="hw-btns"><button type="button" class="mini-btn" onclick="addSlot(this)" title="这个科目有两条功课">＋</button><button type="button" class="mini-btn" onclick="clearSlots(this)" title="这个科目没有功课">－</button></span></td><td><div class="slots"><input class="slot" placeholder="选填"><input class="slot" placeholder="选填" style="display:none;"></div></td></tr>
-                    <tr data-subject="英文"><td class="subj-cell">英文<span class="hw-btns"><button type="button" class="mini-btn" onclick="addSlot(this)" title="这个科目有两条功课">＋</button><button type="button" class="mini-btn" onclick="clearSlots(this)" title="这个科目没有功课">－</button></span></td><td><div class="slots"><input class="slot" placeholder="选填"><input class="slot" placeholder="选填" style="display:none;"></div></td></tr>
-                    <tr data-subject="數學"><td class="subj-cell">數學<span class="hw-btns"><button type="button" class="mini-btn" onclick="addSlot(this)" title="这个科目有两条功课">＋</button><button type="button" class="mini-btn" onclick="clearSlots(this)" title="这个科目没有功课">－</button></span></td><td><div class="slots"><input class="slot" placeholder="选填"><input class="slot" placeholder="选填" style="display:none;"></div></td></tr>
-                    <tr data-subject="音樂"><td class="subj-cell">音樂<span class="hw-btns"><button type="button" class="mini-btn" onclick="addSlot(this)" title="这个科目有两条功课">＋</button><button type="button" class="mini-btn" onclick="clearSlots(this)" title="这个科目没有功课">－</button></span></td><td><div class="slots"><input class="slot" placeholder="选填"><input class="slot" placeholder="选填" style="display:none;"></div></td></tr>
-                    <tr data-subject="體育"><td class="subj-cell">體育<span class="hw-btns"><button type="button" class="mini-btn" onclick="addSlot(this)" title="这个科目有两条功课">＋</button><button type="button" class="mini-btn" onclick="clearSlots(this)" title="这个科目没有功课">－</button></span></td><td><div class="slots"><input class="slot" placeholder="选填"><input class="slot" placeholder="选填" style="display:none;"></div></td></tr>
-                    <tr data-subject="成長課"><td class="subj-cell">成長課<span class="hw-btns"><button type="button" class="mini-btn" onclick="addSlot(this)" title="这个科目有两条功课">＋</button><button type="button" class="mini-btn" onclick="clearSlots(this)" title="这个科目没有功课">－</button></span></td><td><div class="slots"><input class="slot" placeholder="选填"><input class="slot" placeholder="选填" style="display:none;"></div></td></tr>
-                    <tr data-subject="普通話"><td class="subj-cell">普通話<span class="hw-btns"><button type="button" class="mini-btn" onclick="addSlot(this)" title="这个科目有两条功课">＋</button><button type="button" class="mini-btn" onclick="clearSlots(this)" title="这个科目没有功课">－</button></span></td><td><div class="slots"><input class="slot" placeholder="选填"><input class="slot" placeholder="选填" style="display:none;"></div></td></tr>
-                    <tr data-subject="人文"><td class="subj-cell">人文<span class="hw-btns"><button type="button" class="mini-btn" onclick="addSlot(this)" title="这个科目有两条功课">＋</button><button type="button" class="mini-btn" onclick="clearSlots(this)" title="这个科目没有功课">－</button></span></td><td><div class="slots"><input class="slot" placeholder="选填"><input class="slot" placeholder="选填" style="display:none;"></div></td></tr>
-                    <tr data-subject="科学"><td class="subj-cell">科学<span class="hw-btns"><button type="button" class="mini-btn" onclick="addSlot(this)" title="这个科目有两条功课">＋</button><button type="button" class="mini-btn" onclick="clearSlots(this)" title="这个科目没有功课">－</button></span></td><td><div class="slots"><input class="slot" placeholder="选填"><input class="slot" placeholder="选填" style="display:none;"></div></td></tr>
-                    <tr data-subject="聖經"><td class="subj-cell">聖經<span class="hw-btns"><button type="button" class="mini-btn" onclick="addSlot(this)" title="这个科目有两条功课">＋</button><button type="button" class="mini-btn" onclick="clearSlots(this)" title="这个科目没有功课">－</button></span></td><td><div class="slots"><input class="slot" placeholder="选填"><input class="slot" placeholder="选填" style="display:none;"></div></td></tr>
-                    <tr data-subject="EPH"><td class="subj-cell">EPH<span class="hw-btns"><button type="button" class="mini-btn" onclick="addSlot(this)" title="这个科目有两条功课">＋</button><button type="button" class="mini-btn" onclick="clearSlots(this)" title="这个科目没有功课">－</button></span></td><td><div class="slots"><input class="slot" placeholder="选填"><input class="slot" placeholder="选填" style="display:none;"></div></td></tr>
-                    <tr data-subject="其他"><td class="subj-cell">其他<span class="hw-btns"><button type="button" class="mini-btn" onclick="addSlot(this)" title="这个科目有两条功课">＋</button><button type="button" class="mini-btn" onclick="clearSlots(this)" title="这个科目没有功课">－</button></span></td><td><div class="slots"><input class="slot" placeholder="选填"><input class="slot" placeholder="选填" style="display:none;"></div></td></tr>
-                </tbody>
-            </table>
-
-            <div id="extraSec" style="display:none;">
-                <p class="sec-title">今日上课（共九節，可点「更改」修改科目）</p>
-                <table class="hw-table" id="lessonTable">
-                    <thead>
-                        <tr><th>節次</th><th>科目</th><th>上课内容</th></tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>第1節</td><td class="subj-cell"><span class="lesson-subject">中文</span><button type="button" class="change-btn" onclick="changeSubject(this)">更改</button></td><td><input placeholder="选填"></td></tr>
-                        <tr><td>第2節</td><td class="subj-cell"><span class="lesson-subject">英文</span><button type="button" class="change-btn" onclick="changeSubject(this)">更改</button></td><td><input placeholder="选填"></td></tr>
-                        <tr><td>第3節</td><td class="subj-cell"><span class="lesson-subject">數學</span><button type="button" class="change-btn" onclick="changeSubject(this)">更改</button></td><td><input placeholder="选填"></td></tr>
-                        <tr><td>第4節</td><td class="subj-cell"><span class="lesson-subject">音樂</span><button type="button" class="change-btn" onclick="changeSubject(this)">更改</button></td><td><input placeholder="选填"></td></tr>
-                        <tr><td>第5節</td><td class="subj-cell"><span class="lesson-subject">體育</span><button type="button" class="change-btn" onclick="changeSubject(this)">更改</button></td><td><input placeholder="选填"></td></tr>
-                        <tr><td>第6節</td><td class="subj-cell"><span class="lesson-subject">成長課</span><button type="button" class="change-btn" onclick="changeSubject(this)">更改</button></td><td><input placeholder="选填"></td></tr>
-                        <tr><td>第7節</td><td class="subj-cell"><span class="lesson-subject">普通話</span><button type="button" class="change-btn" onclick="changeSubject(this)">更改</button></td><td><input placeholder="选填"></td></tr>
-                        <tr><td>第8節</td><td class="subj-cell"><span class="lesson-subject">人文</span><button type="button" class="change-btn" onclick="changeSubject(this)">更改</button></td><td><input placeholder="选填"></td></tr>
-                        <tr><td>第9節</td><td class="subj-cell"><span class="lesson-subject">科学</span><button type="button" class="change-btn" onclick="changeSubject(this)">更改</button></td><td><input placeholder="选填"></td></tr>
-                    </tbody>
-                </table>
-
-                <p class="sec-title">手册其他内容</p>
-                <div class="form-grid">
-                    <div class="field wide">
-                        <label>通告 / 温馨提示</label>
-                        <textarea id="fNotice" placeholder="选填：通知家长的事项"></textarea>
-                    </div>
-                    <div class="field wide">
-                        <label>家长联络事项</label>
-                        <textarea id="fContact" placeholder="选填：需要家长留意或回复的事项"></textarea>
-                    </div>
-                </div>
-            </div>
-
-            <div class="actions">
-                <button class="btn-ghost" onclick="closeForm()">取消</button>
-                <button class="btn-blue" onclick="issue()">发出</button>
-            </div>
+    <div class="hidden" id="detailBox">
+        <div class="sheet" id="sheet"></div>
+        <div class="tools">
+            <button class="btn btn-primary" onclick="window.print()">打印 / 保存 PDF</button>
+            <button class="btn btn-ghost" onclick="backToList()">返回列表</button>
         </div>
     </div>
 
-    <!-- 手册预览 -->
-    <div class="overlay" id="previewOverlay" onclick="onBackdropClick(event, 'previewOverlay')">
-        <div class="card" onclick="event.stopPropagation()">
-            <h2>手册预览</h2>
-            <div class="pv-sheet" id="pvBody"></div>
-            <div class="actions">
-                <button class="btn-ghost" onclick="closePreview()">关闭</button>
-                <button class="btn-ghost" id="shareBtn" onclick="copyShare()">复制公开链接</button>
-                <button class="btn-blue" onclick="window.print()">打印 / 保存 PDF</button>
-            </div>
-        </div>
-    </div>
+<script>
+    function escapeText(s) {
+        return String(s === undefined || s === null ? "" : s)
+            .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+    }
 
-    <!-- 科目选择弹窗 -->
-    <div class="overlay" id="subOverlay" onclick="if(event.target===this)closeSubPicker()">
-        <div class="card sub-card" onclick="event.stopPropagation()">
-            <h2>选择科目</h2>
-            <div class="sub-grid">
-                <button type="button" class="sub-opt" onclick="pickSubject('中文')">中文</button>
-                <button type="button" class="sub-opt" onclick="pickSubject('英文')">英文</button>
-                <button type="button" class="sub-opt" onclick="pickSubject('數學')">數學</button>
-                <button type="button" class="sub-opt" onclick="pickSubject('音樂')">音樂</button>
-                <button type="button" class="sub-opt" onclick="pickSubject('體育')">體育</button>
-                <button type="button" class="sub-opt" onclick="pickSubject('成長課')">成長課</button>
-                <button type="button" class="sub-opt" onclick="pickSubject('普通話')">普通話</button>
-                <button type="button" class="sub-opt" onclick="pickSubject('人文')">人文</button>
-                <button type="button" class="sub-opt" onclick="pickSubject('科学')">科学</button>
-                <button type="button" class="sub-opt" onclick="pickSubject('聖經')">聖經</button>
-                <button type="button" class="sub-opt" onclick="pickSubject('EPH')">EPH</button>
-                <button type="button" class="sub-opt" onclick="customSubject()">自填…</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="toast" id="toast"></div>
-
-    <script>
-        let mode = "hw"; // hw=只写功课, all=所有手册
-        let shareLink = "";
-
-        function showToast(msg) {
-            const t = document.getElementById("toast");
-            t.textContent = msg;
-            t.classList.add("show");
-            clearTimeout(showToast._timer);
-            showToast._timer = setTimeout(() => t.classList.remove("show"), 2200);
+    function b64decodeUnicode(str) {
+        try {
+            return decodeURIComponent(escape(atob(str)));
+        } catch (e) {
+            try { return atob(str); } catch (e2) { return ""; }
         }
+    }
 
-        function escapeText(s) {
-            return String(s).replace(/[&<>"']/g, c => ({
-                "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
-            }[c]));
-        }
+    function buildSheetHtml(d) {
+        var html = "";
+        html += '<div class="pv-school">聖路易斯學校</div>';
+        html += '<div class="pv-book">家校手冊 · Homework Handbook</div>';
+        html += '<div class="pv-info"><span>日期：' + escapeText(d.date) + '</span>';
+        html += '<span>班別：' + escapeText(d.cls) + '</span></div>';
 
-        function setMode(m) {
-            mode = m;
-            document.getElementById("modeHw").classList.toggle("active", m === "hw");
-            document.getElementById("modeAll").classList.toggle("active", m === "all");
-            document.getElementById("extraSec").style.display = m === "all" ? "block" : "none";
-        }
-
-        function formatDate(d) {
-            return d.getFullYear() + "-" +
-                String(d.getMonth() + 1).padStart(2, "0") + "-" +
-                String(d.getDate()).padStart(2, "0");
-        }
-
-        function setDate(offset) {
-            const d = new Date();
-            d.setDate(d.getDate() + offset);
-            document.getElementById("fDate").value = formatDate(d);
-        }
-
-        function openForm() {
-            setDate(0);
-            document.getElementById("fDate").max = formatDate(new Date());
-            document.getElementById("formOverlay").classList.add("show");
-            setTimeout(() => document.getElementById("fClass").focus(), 60);
-        }
-
-        function closeForm() {
-            document.getElementById("formOverlay").classList.remove("show");
-        }
-
-        function closePreview() {
-            document.getElementById("previewOverlay").classList.remove("show");
-        }
-
-        function onBackdropClick(e, id) {
-            if (e.target.id === id) id === "formOverlay" ? closeForm() : closePreview();
-        }
-
-        function b64encodeUnicode(str) {
-            return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,
-                (m, p1) => String.fromCharCode(parseInt(p1, 16))));
-        }
-
-        function b64decodeUnicode(str) {
-            return decodeURIComponent(atob(str).split("").map(
-                c => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2)).join(""));
-        }
-
-        function issue() {
-            const date = document.getElementById("fDate").value || "—";
-            if (date !== "—" && date > formatDate(new Date())) {
-                showToast("日期不能选未来的日期");
-                return;
-            }
-            const cls = document.getElementById("fClass").value.trim() || "—";
-
-            // 收集功课表格（每科可有一或两条功课）
-            const rows = [];
-            document.querySelectorAll("#hwTable tbody tr").forEach(tr => {
-                const texts = [];
-                tr.querySelectorAll(".slot").forEach(inp => {
-                    const v = inp.value.trim();
-                    if (v) texts.push(v);
-                });
-                rows.push({ subject: tr.dataset.subject, texts: texts });
-            });
-
-            // 收集上课表格（所有手册模式，九节）
-            const lessons = [];
-            document.querySelectorAll("#lessonTable tbody tr").forEach(tr => {
-                lessons.push({
-                    subject: tr.querySelector(".lesson-subject").textContent.trim(),
-                    text: tr.querySelector("td:last-child input").value.trim()
-                });
-            });
-
-            const data = {
-                mode: mode,
-                date: date,
-                cls: cls,
-                rows: rows,
-                lessons: lessons,
-                notice: document.getElementById("fNotice").value.trim(),
-                contact: document.getElementById("fContact").value.trim()
-            };
-
-            // 生成公开链接：手册内容编码在网址中
-            try {
-                shareLink = location.href.split("#")[0] + "#h=" + b64encodeUnicode(JSON.stringify(data));
-            } catch (e) { shareLink = ""; }
-
-            // 保存到已发出列表
-            const list = loadIssued();
-            if (editingId) {
-                const idx = list.findIndex(it => it.id === editingId);
-                if (idx > -1) list[idx] = { id: editingId, d: data, link: shareLink };
-                editingId = null;
+        html += '<table class="pv-table"><thead><tr><th>科目</th><th>功課</th></tr></thead><tbody>';
+        (d.rows || []).forEach(function (r) {
+            var cell;
+            if (!r.texts || !r.texts.length) {
+                cell = '<span class="pv-empty">—</span>';
+            } else if (r.texts.length === 1) {
+                cell = escapeText(r.texts[0]);
             } else {
-                list.unshift({ id: Date.now().toString(36) + Math.floor(Math.random() * 1e4).toString(36), d: data, link: shareLink });
+                cell = r.texts.map(function (t, i) { return (i + 1) + '. ' + escapeText(t); }).join('<br>');
             }
-            saveIssued(list);
-            renderIssued();
-            pushCloud(list);
-            document.getElementById("pvBody").innerHTML = buildSheetHtml(data);
-            document.getElementById("shareBtn").style.display = "inline-block";
-            closeForm();
-            document.getElementById("previewOverlay").classList.add("show");
-            showToast("手册已发出，可通过公开链接在网上查看");
-        }
+            html += '<tr><td>' + escapeText(r.subject) + '</td><td>' + cell + '</td></tr>';
+        });
+        html += '</tbody></table>';
 
-        // ===== 已发出的手册列表 =====
-        const ISSUED_KEY = "homework_issued";
-        const CLOUD_URL = "https://api.restful-api.dev/objects/ff808181a09d98f701a1bf4548d86d71";
-        let editingId = null;
-
-        function loadIssued() {
-            try { return JSON.parse(localStorage.getItem(ISSUED_KEY)) || []; }
-            catch (e) { return []; }
-        }
-
-        function saveIssued(list) {
-            try { localStorage.setItem(ISSUED_KEY, JSON.stringify(list.slice(0, 100))); } catch (e) {}
-        }
-
-        // 把列表同步到云端（所有机器共用一份数据）
-        function pushCloud(list, silent) {
-            try {
-                fetch(CLOUD_URL, {
-                    method: "PUT",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ name: "homework_issued", data: { issued: list.slice(0, 100) } })
-                }).then(r => {
-                    if (r.ok) {
-                        if (!silent) setState("已同步云端（" + loadIssued().length + " 条记录）");
-                    } else {
-                        setState("云端上传失败（代码 " + r.status + "），数据只保存在本机");
-                    }
-                }).catch(() => {
-                    setState("云端上传失败，数据只保存在本机");
-                });
-            } catch (e) {
-                setState("云端上传失败，数据只保存在本机");
-            }
-        }
-
-        // 从云端拉取列表并与本地合并（两边都有就按 id 去重）
-        function fetchCloud() {
-            setState("正在连接云端…");
-            try {
-                fetch(CLOUD_URL).then(r => r.json()).then(obj => {
-                    if (obj && obj.data && Array.isArray(obj.data.issued)) {
-                        const cloud = obj.data.issued;
-                        const local = loadIssued();
-                        const map = {};
-                        cloud.forEach(it => { map[it.id] = it; });
-                        local.forEach(it => { if (!map[it.id]) map[it.id] = it; });
-                        const merged = Object.values(map)
-                            .sort((a, b) => (b.id > a.id ? 1 : -1));
-                        saveIssued(merged);
-                        renderIssued();
-                        pushCloud(merged, true); // 把本地独有的记录也传上云端
-                        setState("已同步云端（" + merged.length + " 条记录）");
-                    } else {
-                        setState("已连接云端，但没有数据");
-                    }
-                }).catch(() => {
-                    renderIssued();
-                    setState("云端连接失败，当前显示本机记录");
-                });
-            } catch (e) {
-                setState("云端连接失败，当前显示本机记录");
-            }
-        }
-
-        function setState(msg) {
-            const el = document.getElementById("syncState");
-            if (el) el.textContent = msg;
-        }
-
-        function renderIssued() {
-            const box = document.getElementById("issuedBox");
-            const wrap = document.getElementById("issuedList");
-            const list = loadIssued();
-            box.style.display = list.length ? "block" : "none";
-            wrap.innerHTML = "";
-            list.forEach(it => {
-                const div = document.createElement("div");
-                div.className = "issued-item";
-                div.innerHTML =
-                    '<div class="issued-info">' +
-                    '<div class="issued-title">' + escapeText(it.d.date) + ' · ' + escapeText(it.d.cls) + '</div>' +
-                    '<div class="issued-sub">' + (it.d.mode === "all" ? "所有手册" : "只写功课") +
-                    ' · ' + it.d.rows.filter(r => r.texts && r.texts.length).length + ' 科有功课</div>' +
-                    '</div>' +
-                    '<button type="button" class="item-btn" onclick="viewIssued(\'' + it.id + '\')">查看</button>' +
-                    '<button type="button" class="item-btn" onclick="editIssued(\'' + it.id + '\')">更改</button>' +
-                    '<button type="button" class="item-btn danger" onclick="removeIssued(\'' + it.id + '\')">清除</button>';
-                wrap.appendChild(div);
-            });
-        }
-
-        function viewIssued(id) {
-            const rec = loadIssued().find(it => it.id === id);
-            if (!rec) { showToast("找不到这份手册"); return; }
-            shareLink = rec.link || "";
-            document.getElementById("pvBody").innerHTML = buildSheetHtml(rec.d);
-            document.getElementById("shareBtn").style.display = "inline-block";
-            document.getElementById("previewOverlay").classList.add("show");
-        }
-
-        function editIssued(id) {
-            const rec = loadIssued().find(it => it.id === id);
-            if (!rec) { showToast("找不到这份手册"); return; }
-            const d = rec.d;
-            editingId = id;
-
-            setMode(d.mode);
-            document.getElementById("fDate").max = formatDate(new Date());
-            document.getElementById("fDate").value = d.date !== "—" ? d.date : formatDate(new Date());
-            document.getElementById("fClass").value = d.cls === "—" ? "" : d.cls;
-
-            // 还原功课表格
-            document.querySelectorAll("#hwTable tbody tr").forEach(tr => {
-                const slots = tr.querySelectorAll(".slot");
-                slots.forEach(s => { s.value = ""; s.style.display = "block"; });
-                const rec2 = d.rows.find(r => r.subject === tr.dataset.subject);
-                if (rec2) {
-                    rec2.texts.forEach((t, i) => { if (slots[i]) slots[i].value = t; });
-                    if (rec2.texts.length < 2) slots[1].style.display = "none";
-                } else {
-                    slots[1].style.display = "none";
-                }
-            });
-
-            // 还原上课表格
-            const lessonRows = document.querySelectorAll("#lessonTable tbody tr");
-            (d.lessons || []).forEach((l, i) => {
-                const tr = lessonRows[i];
-                if (!tr) return;
-                tr.querySelector(".lesson-subject").textContent = l.subject;
-                tr.querySelector("td:last-child input").value = l.text;
-            });
-
-            document.getElementById("fNotice").value = d.notice || "";
-            document.getElementById("fContact").value = d.contact || "";
-
-            closePreview();
-            document.getElementById("formOverlay").classList.add("show");
-            showToast("正在更改这份手册，发出后会覆盖原记录");
-        }
-
-        function removeIssued(id) {
-            const list = loadIssued().filter(it => it.id !== id);
-            saveIssued(list);
-            renderIssued();
-            pushCloud(list);
-            showToast("已清除这份手册");
-        }
-
-        function buildSheetHtml(d) {
-            let html = "";
-            html += '<div class="pv-school">聖路易斯學校</div>';
-            html += '<div class="pv-book">家校手冊 · Homework Handbook</div>';
-            html += '<div class="pv-info"><span>日期：' + escapeText(d.date) + '</span>' +
-                    '<span>班別：' + escapeText(d.cls) + '</span></div>';
-
-            html += '<table class="pv-table"><thead><tr><th>科目</th><th>功課</th></tr></thead><tbody>';
-            d.rows.forEach(r => {
-                let cell;
-                if (!r.texts || r.texts.length === 0) {
-                    cell = '<span class="pv-empty">—</span>';
-                } else if (r.texts.length === 1) {
-                    cell = escapeText(r.texts[0]);
-                } else {
-                    cell = r.texts.map((t, i) => (i + 1) + '. ' + escapeText(t)).join('<br>');
-                }
-                html += '<tr><td>' + escapeText(r.subject) + '</td><td>' + cell + '</td></tr>';
-            });
-            html += '</tbody></table>';
-
-            if (d.mode === "all") {
-                html += '<table class="pv-table"><thead><tr><th>科目</th><th>上課內容</th></tr></thead><tbody>';
-                d.lessons.forEach(r => {
-                    html += '<tr><td>' + escapeText(r.subject) + '</td><td>' +
-                        (r.text ? escapeText(r.text) : '<span class="pv-empty">—</span>') + '</td></tr>';
+        if (d.mode === "all") {
+            var lessons = (d.lessons || []).filter(function (l) { return l.subject; });
+            if (lessons.length) {
+                html += '<table class="pv-table" style="margin-top:16px"><thead><tr><th>節次</th><th>科目</th><th>上課內容</th></tr></thead><tbody>';
+                lessons.forEach(function (l, i) {
+                    html += '<tr><td>第' + (i + 1) + '節</td><td>' + escapeText(l.subject) + '</td><td>' +
+                        (l.text ? escapeText(l.text) : '<span class="pv-empty">—</span>') + '</td></tr>';
                 });
                 html += '</tbody></table>';
-
-                html += '<div class="pv-sec"><b>通告 / 溫馨提示</b>' +
-                    (d.notice ? escapeText(d.notice) : '<span class="pv-empty">（無）</span>') + '</div>';
-                html += '<div class="pv-sec"><b>家長聯絡事項</b>' +
-                    (d.contact ? escapeText(d.contact) : '<span class="pv-empty">（無）</span>') + '</div>';
             }
-            return html;
+            html += '<div class="pv-sec"><b>學校通告</b>' +
+                (d.notice ? escapeText(d.notice) : '<span class="pv-empty">（無）</span>') + '</div>';
+            html += '<div class="pv-sec"><b>家長聯絡事項</b>' +
+                (d.contact ? escapeText(d.contact) : '<span class="pv-empty">（無）</span>') + '</div>';
         }
+        return html;
+    }
 
-        // 功课表格：＋ 显示第二条功课输入框
-        function addSlot(btn) {
-            const tr = btn.closest("tr");
-            const slots = tr.querySelectorAll(".slot");
-            slots[1].style.display = "block";
-            slots[1].focus();
+    var records = [];
+
+    function renderList() {
+        var list = document.getElementById("list");
+        var tip = document.getElementById("emptyTip");
+        list.innerHTML = "";
+        if (!records.length) {
+            tip.classList.remove("hidden");
+            return;
         }
-
-        // 功课表格：－ 清空该科所有功课
-        function clearSlots(btn) {
-            const tr = btn.closest("tr");
-            tr.querySelectorAll(".slot").forEach(inp => { inp.value = ""; });
-            tr.querySelectorAll(".slot")[1].style.display = "none";
-            showToast(tr.dataset.subject + "：已清除功课");
-        }
-
-        // 上课表格：更改某一节的科目（弹出科目按钮选择）
-        let subTarget = null;
-
-        function changeSubject(btn) {
-            subTarget = btn.closest("td").querySelector(".lesson-subject");
-            document.getElementById("subOverlay").classList.add("show");
-        }
-
-        function pickSubject(name) {
-            if (subTarget) subTarget.textContent = name;
-            closeSubPicker();
-        }
-
-        function customSubject() {
-            const name = prompt("请输入科目名称：", subTarget ? subTarget.textContent : "");
-            if (name !== null && name.trim() && subTarget) {
-                subTarget.textContent = name.trim();
-            }
-            closeSubPicker();
-        }
-
-        function closeSubPicker() {
-            document.getElementById("subOverlay").classList.remove("show");
-            subTarget = null;
-        }
-
-        function copyShare() {
-            if (!shareLink) { showToast("请先发出一份手册"); return; }
-            const done = () => showToast("公开链接已复制，发给家长即可查看");
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(shareLink).then(done).catch(() => fallbackCopy(done));
-            } else {
-                fallbackCopy(done);
-            }
-        }
-
-        function fallbackCopy(done) {
-            const ta = document.createElement("textarea");
-            ta.value = shareLink;
-            ta.style.position = "fixed";
-            ta.style.opacity = "0";
-            document.body.appendChild(ta);
-            ta.select();
-            try {
-                document.execCommand("copy");
-                done();
-            } catch (e) {
-                showToast("复制失败，请手动复制地址栏链接");
-            }
-            document.body.removeChild(ta);
-        }
-
-        // 通过公开链接打开：直接显示手册（只读查看）
-        (function openFromHash() {
-            const m = location.hash.match(/^#h=(.+)$/);
-            if (!m) return;
-            try {
-                const data = JSON.parse(b64decodeUnicode(decodeURIComponent(m[1])));
-                if (!data || !data.rows) return;
-                document.getElementById("pvBody").innerHTML = buildSheetHtml(data);
-                document.getElementById("shareBtn").style.display = "none";
-                document.getElementById("previewOverlay").classList.add("show");
-                showToast("正在查看公开的手册");
-            } catch (e) {}
-        })();
-
-        // 打开页面时显示本地已发出的手册列表，并从云端拉取最新数据
-        renderIssued();
-        fetchCloud();
-
-        document.addEventListener("keydown", e => {
-            if (e.key === "Escape") { closeForm(); closePreview(); closeSubPicker(); }
-            if (e.key === "Enter" && document.getElementById("formOverlay").classList.contains("show")
-                && e.target.tagName !== "TEXTAREA") {
-                issue();
-            }
+        tip.classList.add("hidden");
+        records.forEach(function (it, idx) {
+            var d = it.d || it;
+            var subjects = (d.rows || []).filter(function (r) { return r.texts && r.texts.length; }).length;
+            var div = document.createElement("div");
+            div.className = "item";
+            div.innerHTML =
+                '<div style="flex:1">' +
+                '<div class="item-date">' + escapeText(d.date) + '<span class="badge">' +
+                (d.mode === "all" ? "所有手冊" : "功課") + '</span></div>' +
+                '<div class="item-meta">' + escapeText(d.cls) + ' · ' + subjects + ' 科有功課</div>' +
+                '</div><span class="item-arrow">›</span>';
+            div.onclick = function () { showDetail(idx); };
+            list.appendChild(div);
         });
-    </script>
+    }
+
+    function showDetail(idx) {
+        var it = records[idx];
+        if (!it) return;
+        document.getElementById("sheet").innerHTML = buildSheetHtml(it.d || it);
+        document.getElementById("list").classList.add("hidden");
+        document.getElementById("emptyTip").classList.add("hidden");
+        document.getElementById("detailBox").classList.remove("hidden");
+        window.scrollTo(0, 0);
+    }
+
+    function backToList() {
+        document.getElementById("detailBox").classList.add("hidden");
+        document.getElementById("list").classList.remove("hidden");
+        renderList();
+    }
+
+    function load() {
+        var m = location.hash.match(/^#h=(.+)$/);
+        if (m) {
+            try {
+                var d = JSON.parse(b64decodeUnicode(m[1]));
+                records = [{ d: d }];
+                document.getElementById("sheet").innerHTML = buildSheetHtml(d);
+                document.getElementById("detailBox").classList.remove("hidden");
+                document.getElementById("emptyTip").classList.add("hidden");
+                return;
+            } catch (e) {}
+        }
+        fetch("homework-data.json", { cache: "no-store" })
+            .then(function (r) { return r.ok ? r.json() : null; })
+            .then(function (obj) {
+                if (!obj) { renderList(); return; }
+                records = Array.isArray(obj) ? obj : (obj.issued || []);
+                renderList();
+            })
+            .catch(function () { renderList(); });
+    }
+
+    load();
+</script>
 </body>
 </html>
