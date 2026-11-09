@@ -493,6 +493,7 @@
     <div class="issued" id="issuedBox" style="display:none;">
         <h3>已发出的手册</h3>
         <div id="issuedList"></div>
+        <p id="syncState" style="text-align:center;color:rgba(255,255,255,.8);font-size:12px;margin:6px 0 0;"></p>
     </div>
 
     <!-- 填写表格 -->
@@ -760,26 +761,58 @@
         }
 
         // 把列表同步到云端（所有机器共用一份数据）
-        function pushCloud(list) {
+        function pushCloud(list, silent) {
             try {
                 fetch(CLOUD_URL, {
                     method: "PUT",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ name: "homework_issued", data: { issued: list.slice(0, 100) } })
-                }).catch(() => {});
-            } catch (e) {}
+                }).then(r => {
+                    if (r.ok) {
+                        if (!silent) setState("已同步云端（" + loadIssued().length + " 条记录）");
+                    } else {
+                        setState("云端上传失败（代码 " + r.status + "），数据只保存在本机");
+                    }
+                }).catch(() => {
+                    setState("云端上传失败，数据只保存在本机");
+                });
+            } catch (e) {
+                setState("云端上传失败，数据只保存在本机");
+            }
         }
 
-        // 从云端拉取列表并刷新页面显示
+        // 从云端拉取列表并与本地合并（两边都有就按 id 去重）
         function fetchCloud() {
+            setState("正在连接云端…");
             try {
                 fetch(CLOUD_URL).then(r => r.json()).then(obj => {
                     if (obj && obj.data && Array.isArray(obj.data.issued)) {
-                        saveIssued(obj.data.issued);
+                        const cloud = obj.data.issued;
+                        const local = loadIssued();
+                        const map = {};
+                        cloud.forEach(it => { map[it.id] = it; });
+                        local.forEach(it => { if (!map[it.id]) map[it.id] = it; });
+                        const merged = Object.values(map)
+                            .sort((a, b) => (b.id > a.id ? 1 : -1));
+                        saveIssued(merged);
                         renderIssued();
+                        pushCloud(merged, true); // 把本地独有的记录也传上云端
+                        setState("已同步云端（" + merged.length + " 条记录）");
+                    } else {
+                        setState("已连接云端，但没有数据");
                     }
-                }).catch(() => {});
-            } catch (e) {}
+                }).catch(() => {
+                    renderIssued();
+                    setState("云端连接失败，当前显示本机记录");
+                });
+            } catch (e) {
+                setState("云端连接失败，当前显示本机记录");
+            }
+        }
+
+        function setState(msg) {
+            const el = document.getElementById("syncState");
+            if (el) el.textContent = msg;
         }
 
         function renderIssued() {
